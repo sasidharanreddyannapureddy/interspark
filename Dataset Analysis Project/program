@@ -1,0 +1,43 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+df = pd.read_csv("C:\ML INTERSHIP\sales_data.csv")
+print("First 5 Rows:")
+print(df.head())
+print("\nDataset Info:")
+print(df.info())
+print("\nMissing Values:")
+print(df.isnull().sum())
+df.drop_duplicates(inplace=True)
+df['Price'].fillna(df['Price'].mean(), inplace=True)
+df['Quantity'].fillna(1, inplace=True)
+df['Date'] = pd.to_datetime(df['Date'])
+df['Total_Sales'] = df['Price'] * df['Quantity']
+print("\nSummary Statistics:")
+print(df.describe())
+high_sales = df[df['Total_Sales'] > 50000]
+print("\nHigh Sales Records:")
+print(high_sales)
+category_sales = df.groupby('Category')['Total_Sales'].sum()
+print("\nCategory Wise Sales:")
+print(category_sales)
+city_sales = df.groupby('City')['Total_Sales'].mean()
+print("\nCity Wise Average Sales:")
+print(city_sales)
+# Top selling products
+top_products = df.groupby('Product')['Quantity'].sum().sort_values(ascending=False)
+print("\nTop Selling Products:")
+print(top_products.head())
+df.to_csv("cleaned_sales_data.csv", index=False)
+category_sales.plot(kind='bar')
+plt.title("Category Wise Total Sales")
+plt.xlabel("Category")
+plt.ylabel("Sales")
+plt.show()
+monthly_sales = df.groupby(df['Date'].dt.month)['Total_Sales'].sum()
+monthly_sales.plot(kind='line', marker='o')
+plt.title("Monthly Sales Trend")
+plt.xlabel("Month")
+plt.ylabel("Total Sales")
+plt.show()
+
